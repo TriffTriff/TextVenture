@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextVenture
 {
+    //to be a general form of fortSession and WorldSession: 
     class Map
     {
     }

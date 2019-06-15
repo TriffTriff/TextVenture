@@ -37,6 +37,7 @@ namespace TextVenture
         public void AddFortToArr(Fort f)
         {
             //add fort to arr:
+            //can throw systemOutOfMemoryException if insane sizes chosen at start:
             Array.Resize(ref fortArr, fortArr.Length + 1);
             fortArr[fortArr.Length - 1] = f;
         }
@@ -53,13 +54,27 @@ namespace TextVenture
         }
         //if false, then x, if true, then y:
         //can't really set length here:
-        public void SetLengthXY(int xy, bool boolean)
+        /*public void SetLengthXY(int xy, bool boolean)
         {
             if (boolean) //y
             {
 
             } //x
             else { }
+        }*/
+        public void SetWorldX(int x)
+        {
+            int y = charArr.GetLength(0);
+            charArr = new char[y,x];
+        }
+        public void SetWorldY(int y)
+        {
+            int x = charArr.GetLength(1);
+            charArr = new char[y, x];
+        }
+        public void SetWorldXY(int x, int y)
+        {
+            charArr = new char[y, x];
         }
         public Fort[] GetFortArr()
         {

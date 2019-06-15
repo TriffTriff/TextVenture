@@ -143,12 +143,11 @@ namespace TextVenture
             return false;
         }
         //start fort session:
-       // when to start fort session?
        //when spot traversed to == 'F'
         public void StartFortSession(int x, int y)
         {
             //get fort number in the ordered fort[] to send as parameter for play instead of x and y:
-            //CODE HERE: a loop on x and y, find matching pair, send matching fort number as parameter:
+            //a loop on x and y, find matching pair, send matching fort number as parameter:
             int num = -1;
             for (int i = 0; i < world.GetFortArr().Length; i++)
             {
@@ -157,15 +156,31 @@ namespace TextVenture
             if (num == -1) return;
             //fort session class will need: specific fort passed to it(?):
             //construct new fort instance using constructor with extra player parameter:
-            //player will always spawn in bottom left of fort:
-            Player p = new Player(1, world.GetFortYDim() - 2);
+            //retrieve xy of fort enterance, set as player xy here:
+            //int fx = world.GetFortArr()[num].GetFortStartX();
+            //int fy = world.GetFortArr()[num].GetFortStartY();
+            //Player p = new Player(1, world.GetFortYDim() - 2);
+            //INSTEAD OF CREATING NEW PLAYER, PASS ONE FROM WORLD. CHANGE X AND Y TO FORT X AND Y:
+            //SAVE OLD X AND Y VALUES FROM THE PLAYER TO BE RESTORED LATTER:
+            //Player p = new Player(fx, fy);
+
+            //store player x and y values:
+            int px = world.GetPlayer().GetPlayerX();
+            int py = world.GetPlayer().GetPlayerY();
+
+            //set player x and y new values:
+            world.GetPlayer().UpdateYX(world.GetFortArr()[num].GetFortStartY(), world.GetFortArr()[num].GetFortStartX());
             //Fort f = new Fort(world.GetFortArr()[num].GetFortX()+0, world.GetFortArr()[num].GetFortY()+0, world.GetFortArr()[num].GetFortCharArr(),p);
             //FortSession fs = new FortSession(f, p);
-            FortSession fs = new FortSession(world.GetFortArr()[num], p);
+            //FortSession fs = new FortSession(world.GetFortArr()[num], p);
+            FortSession fs = new FortSession(world.GetFortArr()[num], world.GetPlayer());
             while (true)
             {
                 if (!fs.Play()) break;
             }
+            //AFTER FORTSESSION, RESTORE PLAYERS OLD X AND Y VALUES:
+            //code here:
+            world.GetPlayer().UpdateYX(py,px);
         }
 
         public bool DiagMove(string direction)
@@ -291,6 +306,7 @@ namespace TextVenture
             string s = Console.ReadLine();
             switch (s)
             {
+                //put all repeated code into new separate smaller routine to cut code down
                 case "north":
                 case "n":
                     if (!Move("N")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
@@ -442,6 +458,7 @@ namespace TextVenture
                 }
             }
             //3. fill randomly with trees
+            int num = rand.Next(1, 26);
             for (int i = 1; i < world.GetLengthXY('y') - 1; i++)
             {
                 for (int j = 1; j < world.GetLengthXY('x') - 1; j++)
@@ -449,7 +466,7 @@ namespace TextVenture
                     //<5 percent chance of tree
                     //once tree decided, then higher chance of trees in spaces arround it
                     //if(j==i)charArr[i, j] = 'T';
-                    int num = rand.Next(1, 26);
+                    num = rand.Next(1, 26);
                     if (num == 1 || num == 2 || num == 3 || num == 4 || num == 5)
                     {
                         //ChooseColor(charArr[i, j]);
@@ -459,6 +476,8 @@ namespace TextVenture
                 }
             }
             //4. fill randomly with fort
+            //huge jump in ram usage here:
+            num = rand.Next(1, 100);
             for (int i = 1; i < world.GetLengthXY('y') - 1; i++)
             {
                 for (int j = 1; j < world.GetLengthXY('x') - 1; j++)
@@ -466,7 +485,7 @@ namespace TextVenture
                     //<5 percent chance of fort
                     //once tree decided, then higher chance of trees in spaces arround it
                     //if(j==i)charArr[i, j] = 'T';
-                    int num = rand.Next(1, 100);
+                    num = rand.Next(1, 100);
                     if (num == 1 || num == 2)
                     {
                         //ChooseColor(charArr[i, j]);
@@ -528,10 +547,11 @@ namespace TextVenture
             } //4. fill in character space
             //error on this line causes error on fort f declaration:
             //change to bottom left corner:
-            chr[chr.GetLength(0)-2, 1] = 'C';
+            //REMOVE THIS?
+            //chr[chr.GetLength(0)-2, 1] = 'C';
             //construct new player for fort constructor:
             //flip x and y?
-            Player p = new Player(chr.GetLength(1) / 2, chr.GetLength(0) / 2);
+            //Player p = new Player(chr.GetLength(1) / 2, chr.GetLength(0) / 2);
             //5. exit space:
             //PASS p AS PARAMETER TO f:
             Fort f = new Fort(x, y, chr);

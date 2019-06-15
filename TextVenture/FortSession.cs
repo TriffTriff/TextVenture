@@ -9,7 +9,7 @@ namespace TextVenture
     class FortSession
     {
         Fort fort;
-        char currentBox = ' ';
+        char currentBox = '[';
         //treat this class like session: containing all of the same methods but for fort instead of world:
         public void DrawMap()
         {
@@ -61,6 +61,15 @@ namespace TextVenture
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.ForegroundColor = ConsoleColor.Gray;
                     break;
+                case '[':
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+                case ']':
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+
                 default:
                     ResetColors();
                     break;
@@ -82,46 +91,88 @@ namespace TextVenture
             string s = Console.ReadLine();
             switch (s)
             {
+                //put all repeated code into new separate smaller routine to cut code down
                 case "north":
                 case "n":
                     if (!Move("N")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else DrawMap();
+                    //leaves 'C' at exit ']': restore fort location of 'C' to be ']' instead:
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "south":
                 case "s":
                     if (!Move("S")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else DrawMap();
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "east":
                 case "e":
                     if (!Move("E")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else DrawMap();
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "west":
                 case "w":
                     if (!Move("W")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else DrawMap();
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 //diag moves split into own routine to make it easier to read/debug:
                 case "norteast":
                 case "ne":
                     if (!DiagMove("NE")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else { DrawMap(); }
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "northwest":
                 case "nw":
                     if (!DiagMove("NW")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else { DrawMap(); }
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "southwest":
                 case "sw":
                     if (!DiagMove("SW")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else { DrawMap(); }
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 case "southeast":
                 case "se":
                     if (!DiagMove("SE")) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Coundn't go that way."); DrawMap(); }
                     else { DrawMap(); }
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     break;
                 //*****************************************
                 case "exit":
@@ -130,9 +181,15 @@ namespace TextVenture
                     //***(temp fix, as the fort will have an entrance and an exit x and y at a later date):
                     fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
                     //where start box is, change back to 'C':
-                    fort.GetFortCharArr()[fort.GetFortCharArr().GetLength(0)-2, 1] = 'C';
+                    //fort.GetFortCharArr()[fort.GetFortCharArr().GetLength(0)-2, 1] = 'C';
+                    //fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(),  = 'C';
                     return false;
                 default:
+                    if (currentBox.Equals(']'))
+                    {
+                        fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = currentBox;
+                        return false;
+                    }
                     Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Not valid direction.");
                     ResetColors();
                     return true;
@@ -167,7 +224,7 @@ namespace TextVenture
                             fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = ' ';
                             //update charposY and charPosX locations:
                             UpdateYX(fort.GetFortPlayer().GetPlayerY() - 1, fort.GetFortPlayer().GetPlayerX() - 1);
-                        }
+                        } 
                         else //currentBox set:
                         {
                             char futureCurrentBox = fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY() - 1, fort.GetFortPlayer().GetPlayerX() - 1];
@@ -192,7 +249,7 @@ namespace TextVenture
                             fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY(), fort.GetFortPlayer().GetPlayerX()] = ' ';
                             //update charposY and charPosX locations:
                             UpdateYX(fort.GetFortPlayer().GetPlayerY() - 1, fort.GetFortPlayer().GetPlayerX() + 1);
-                        }
+                        } 
                         else //currentBox set:
                         {
                             char futureCurrentBox = fort.GetFortCharArr()[fort.GetFortPlayer().GetPlayerY() - 1, fort.GetFortPlayer().GetPlayerX() + 1];

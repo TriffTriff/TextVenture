@@ -29,13 +29,16 @@ namespace TextVenture
             {
                 fortExitX = r.Next(1, fortDim.GetLength(1) - 1);
                 fortExitY = r.Next(1, fortDim.GetLength(0) - 1);
-                if (fortStartX != fortExitX && fortStartY != fortExitY)
+                if (fortStartX == fortExitX && fortStartY == fortExitY)
                     continue;
                 else break;
             }
             this.x = x;
             this.y = y;
             fortSpace = fortDim;
+            //set fort enterence xy as '[', exit as ']':
+            fortSpace[fortStartY, fortStartX] = '[';
+            fortSpace[fortExitY, fortExitX] = ']';
         }
         public Fort(int x, int y, char[,] fortDim, Player p)
         {
@@ -51,9 +54,13 @@ namespace TextVenture
                     continue;
                 else break;
             }
+
             this.x = x;
             this.y = y;
             fortSpace = fortDim;
+            //set fort enterence xy as '[', exit as ']':
+            fortSpace[fortStartY, fortStartX] = '[';
+            fortSpace[fortExitY, fortExitX] = ']';
             this.p = p;
         }
         public int GetFortStartX()
